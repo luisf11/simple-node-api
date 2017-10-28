@@ -7,13 +7,14 @@ app.use(bodyParser.json());
 
 Genre = require('./models/genre');
 Book = require('./models/book');
+Movie = require('./models/movie');
 
 //conect to mongoose
 mongoose.connect('mongodb://127.0.0.1/bookstore');
 var db = mongoose.connection;
 
 app.get('/',function(req, res){
-  res.send('please use /api/books or /api/genres');
+  res.send('please use /api/books, /api/genres or /api/movies');
 });
 
 app.get('/api/genres',function(req, res){
@@ -92,5 +93,47 @@ app.put('/api/books/:_id',function(req, res){
     res.json(book);
   });
 });
+
+app.get('/api/movies',function(req, res){
+  Movie.getMovies(function(err,movies){
+    if (err) {
+      throw err;
+    }
+    res.json(movies);
+  });
+});
+
+app.post('/api/movies',function(req, res){
+  var movie = req.body;
+  Movie.addMovie(movie, function(err,movie){
+    if (err) {
+      throw err;
+    }
+    res.json(movie);
+  });
+});
+
+app.put('/api/movies/:_id',function(req, res){
+  var id = req.params._id;
+  var movie = req.body;
+  Movie.updateMovie(id , movie, {} , function(err,movie){
+    if (err) {
+      throw err;
+    }
+    res.json(movie);
+  });
+});
+
+app.delete('/api/movies/:_id',function(req, res){
+  var id = req.params._id;
+  var movie = req.body;
+  Movie.removeMovie(id , function(err,movie){
+    if (err) {
+      throw err;
+    }
+    res.json(movie);
+  });
+});
+
 app.listen(3000);
 console.log("servidor escuchando en el puerto 3000");
